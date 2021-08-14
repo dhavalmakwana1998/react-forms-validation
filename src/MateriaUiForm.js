@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
-import { Grid, Box } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import Avatar from "@material-ui/core/Avatar";
+import { Grid } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
 
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
@@ -41,8 +36,9 @@ const MateriaUiForm = () => {
     website: "",
     city: "",
     bio: "",
+    password: "",
+    cnPassword: "",
   });
-  const history = useHistory();
   const classes = useStyles();
 
   const onInputChange = (event) => {
@@ -52,7 +48,7 @@ const MateriaUiForm = () => {
   };
   const onSubmitHandle = async (event) => {
     event.preventDefault();
-    alert("success");
+    alert("success..please check console");
     console.log(users);
   };
 
@@ -76,25 +72,28 @@ const MateriaUiForm = () => {
       }
       return true;
     });
+    ValidatorForm.addValidationRule("isPasswordMatch", (value) => {
+      if (value !== users.password) {
+        return false;
+      }
+      return true;
+    });
 
     return () => {
       ValidatorForm.removeValidationRule("isNaN");
       ValidatorForm.removeValidationRule("isNum");
       ValidatorForm.removeValidationRule("numLimit");
+      ValidatorForm.removeValidationRule("isPasswordMatch");
     };
   }, []);
 
   return (
     <>
-      <div className="container">
-        <Grid container spacing={3} style={{ marginBottom: "6px" }}>
-          <Grid item sm={12}>
-            <Typography variant="h4">Add User</Typography>
-          </Grid>
-        </Grid>
+      <div className="container my-4">
         <Container maxWidth="md">
           <CssBaseline />
           <div className={classes.paper}>
+            <h1 className="text-center">Materi Ui Form</h1>
             <ValidatorForm onSubmit={onSubmitHandle}>
               {/* <form className={classes.form} onSubmit={onSubmitHandle}> */}
               <Grid container spacing={2}>
@@ -179,12 +178,38 @@ const MateriaUiForm = () => {
                     name="city"
                     label="City"
                     id="city"
-                    validators={["required", "isNum"]}
+                    validators={["required"]}
+                    errorMessages={["This field is required"]}
+                    value={users.city}
+                    onChange={onInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextValidator
+                    variant="outlined"
+                    fullWidth
+                    name="password"
+                    label="password"
+                    id="password"
+                    validators={["required"]}
+                    errorMessages={["This field is required"]}
+                    value={users.password}
+                    onChange={onInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextValidator
+                    variant="outlined"
+                    fullWidth
+                    name="cnPassword"
+                    label="Confirm Password"
+                    id="cnPassword"
+                    validators={["required", "isPasswordMatch"]}
                     errorMessages={[
                       "This field is required",
-                      "Please enter valid data",
+                      "password not match",
                     ]}
-                    value={users.city}
+                    value={users.cnPassword}
                     onChange={onInputChange}
                   />
                 </Grid>
