@@ -226,22 +226,18 @@ const ReactHookForm = () => {
             <div className="col-12 mb-3">
               <label>Field Array</label>
               {fields.map((field, index) => (
-                <div>
+                <div key={index}>
                   <input
-                    className={classNames("form-control", {
-                      "is-invalid": errors?.test[index],
-                    })}
+                    className={classNames("form-control my-2")}
                     key={index} // important to include key with field's id
-                    {...register(`test.${index}.value`, {
-                      required: "This field is required",
-                    })}
+                    {...register(`test.${index}.value`)}
                     defaultValue={field.value} // make sure to include defaultValue
                   />
-                  {errors?.test[index] && (
+                  {/* {errors?.test[index] && (
                     <span className="text-danger">
                       {errors?.test[index].message}
                     </span>
-                  )}
+                  )} */}
                 </div>
               ))}
 
