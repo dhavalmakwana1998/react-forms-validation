@@ -42,9 +42,8 @@ const MateriaUiForm = () => {
   const classes = useStyles();
 
   const onInputChange = (event) => {
-    const eventName = event.target.name;
-    const eventValue = event.target.value;
-    setUsers({ ...users, [eventName]: eventValue });
+    const { name, value } = event.target;
+    setUsers({ ...users, [name]: value });
   };
   const onSubmitHandle = async (event) => {
     event.preventDefault();
@@ -85,7 +84,7 @@ const MateriaUiForm = () => {
       ValidatorForm.removeValidationRule("numLimit");
       ValidatorForm.removeValidationRule("isPasswordMatch");
     };
-  }, []);
+  }, [users.password]);
 
   return (
     <>

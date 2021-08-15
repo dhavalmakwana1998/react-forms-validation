@@ -1,4 +1,3 @@
-import "./App.css";
 import MateriaUiForm from "./MateriaUiForm";
 import SimpleForm from "./SimpleForm";
 import ReactHookForm from "./ReactHookForm";

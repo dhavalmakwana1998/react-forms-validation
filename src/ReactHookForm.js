@@ -6,20 +6,21 @@ const ReactHookForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, touchedFields },
     watch,
     control,
-  } = useForm();
+  } = useForm({
+    mode: "all",
+    reValidateMode: "onChange",
+    criteriaMode: "all",
+  });
 
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control,
-      name: "test", // unique name for your Field Array
-      keyName: 0, //default to "id", you can change the key name
-    }
-  );
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "test", // unique name for your Field Array
+    keyName: 0, //default to "id", you can change the key name
+  });
 
-  console.log(errors);
   const onSubmit = (data) => {
     alert("success..please check console");
     console.log(data);
@@ -39,6 +40,7 @@ const ReactHookForm = () => {
                   id="name"
                   className={classNames("form-control", {
                     "is-invalid": errors.name,
+                    "is-valid": !errors.name && touchedFields.name,
                   })}
                   {...register("name", {
                     required: "This field is required",
@@ -70,9 +72,14 @@ const ReactHookForm = () => {
                   id="phone"
                   className={classNames("form-control", {
                     "is-invalid": errors.phone,
+                    "is-valid": !errors.phone && touchedFields.phone,
                   })}
                   {...register("phone", {
                     required: "This field is required",
+                    pattern: {
+                      value: /\d+/gi,
+                      message: "Valid only numbers",
+                    },
                     minLength: {
                       value: 10,
                       message: "minimum 10 character required",
@@ -80,9 +87,6 @@ const ReactHookForm = () => {
                     maxLength: {
                       value: 10,
                       message: "input size exceed minimum 10 character",
-                    },
-                    valueAsNumber: {
-                      message: "invalid number format",
                     },
                   })}
                 />
@@ -107,6 +111,7 @@ const ReactHookForm = () => {
                   })}
                   className={classNames("form-control", {
                     "is-invalid": errors.email,
+                    "is-valid": !errors.email && touchedFields.email,
                   })}
                 />
                 {errors.email && (
@@ -122,6 +127,7 @@ const ReactHookForm = () => {
                   id="state"
                   className={classNames("form-control", {
                     "is-invalid": errors.state,
+                    "is-valid": !errors.state && touchedFields.state,
                   })}
                   {...register("state", {
                     required: "This field is required",
@@ -146,6 +152,8 @@ const ReactHookForm = () => {
                   id="addressLine1"
                   className={classNames("form-control", {
                     "is-invalid": errors.address?.one,
+                    "is-valid":
+                      !errors.address?.one && touchedFields.address?.one,
                   })}
                   {...register("address.one", {
                     required: "This field is required",
@@ -166,6 +174,8 @@ const ReactHookForm = () => {
                   name="addres.two"
                   className={classNames("form-control", {
                     "is-invalid": errors.address?.two,
+                    "is-valid":
+                      !errors.address?.two && touchedFields.address?.two,
                   })}
                   id="addressLine2"
                   {...register("address.two", {
@@ -189,6 +199,7 @@ const ReactHookForm = () => {
                   id="password"
                   className={classNames("form-control", {
                     "is-invalid": errors.password,
+                    "is-valid": !errors.password && touchedFields.password,
                   })}
                   {...register("password", {
                     required: "This field is required",
@@ -214,6 +225,7 @@ const ReactHookForm = () => {
                   })}
                   className={classNames("form-control", {
                     "is-invalid": errors.cnPassword,
+                    "is-valid": !errors.cnPassword && touchedFields.cnPassword,
                   })}
                 />
                 {errors.cnPassword && (
@@ -223,21 +235,40 @@ const ReactHookForm = () => {
                 )}
               </div>
             </div>
+
             <div className="col-12 mb-3">
               <label>Field Array</label>
               {fields.map((field, index) => (
-                <div key={index}>
-                  <input
-                    className={classNames("form-control my-2")}
-                    key={index} // important to include key with field's id
-                    {...register(`test.${index}.value`)}
-                    defaultValue={field.value} // make sure to include defaultValue
-                  />
-                  {/* {errors?.test[index] && (
-                    <span className="text-danger">
-                      {errors?.test[index].message}
-                    </span>
-                  )} */}
+                <div className="" key={index}>
+                  <div className="input-group mb-3">
+                    <input
+                      className={classNames("form-control")}
+                      key={field.id} // important to include key with field's id
+                      {...register(`test.${index}.value`, {
+                        required: "this field is required",
+                      })}
+                      defaultValue={field.value} // make sure to include defaultValue
+                      placeholder="Test array"
+                    />
+
+                    <div
+                      className="input-group-append"
+                      onClick={() => remove(index)}
+                    >
+                      <span className="input-group-text bg-danger text-light btn btn-danger">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          className="bi bi-trash-fill"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
                 </div>
               ))}
 
@@ -291,7 +322,6 @@ const ReactHookForm = () => {
                 <span className="text-danger">{errors.gender.message}</span>
               )}
             </div>
-            <div className="col-6"></div>
             <div className="col-6 d-flex align-items-center">
               <div className="form-group form-check">
                 <input
@@ -311,10 +341,10 @@ const ReactHookForm = () => {
                 )}
               </div>
             </div>
-            <button type="submit" className="my-4 btn btn-primary">
-              Submit
-            </button>
           </div>
+          <button type="submit" className="my-4 btn btn-primary">
+            Submit
+          </button>
         </form>
       </div>
     </div>
